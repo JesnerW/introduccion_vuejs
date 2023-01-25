@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <div id="app"></div>
+
+    <script>
+      /*Comunicación con componentes profundos*/
+
+      // Provide = permite la lectura de variables a nivel global Line 23
+      var app = Vue.createApp({
+        data(){
+          return {
+            text: "Hola Vue"
+          }
+        },
+        provide(){
+          return {
+            otroTexto: "Hola mundo",
+            otroTexto2: "Hola mundo2",
+          }
+        },
+        template: `
+          <div>
+            {{ text }}
+          </div>
+          <otro/>
+        `,
+      });
+
+      app.component("otro", {
+        template:`
+        <tercer/>
+        `
+      })
+      app.component("tercer", {
+        //se usa inject y se invoca las variables declaradas en Provide Line 23
+        inject: ["otroTexto2", "otroTexto"],
+        template:`
+        <div>{{ otroTexto }}</div>
+        <div>{{ otroTexto2 }}</div>
+        `
+        // se injecta las variables en el HTML
+      })
+
+      const vm = app.mount("#app");
+    </script>
+  </body>
+</html>

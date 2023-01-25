@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <div id="app"></div>
+
+    <script>
+      var vue = Vue.createApp({
+        data() {
+          return {
+            text: "Hola vue",
+            text2: "Cambiando texto",
+            etiqueta: "<p>Usando v-html para mostrar etiquetas</p>",
+            imagen:
+              "https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ",
+            imagen2:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUw569A43dotaViGAWPO0NE01PBa9NagBTkw&usqp=CAU",
+            attri_img: "src",
+            counter_click: 0,
+            counter_key: 0,
+            counter_submit: 0,
+            evt: "submit",
+            evt_detail: "submit.prevent.stop",
+            textoChanged: "Mi texto de prueba",
+            firstName: "Jesner",
+            lastName: "Wilian",
+            now: new Date(),
+            text3: "Puerta Cerrada",
+            open: false,
+          };
+        },
+        watch: {
+          text(value, old) {
+            console.log("Watcher! ", value, old, this.text);
+            /* Ojo!, La funcion debe de tener el mismo nombre que la variable
+            value = El valor que recibe la variable text
+            old = El valor anterior antes de ser cambiado por el nuevo valor*/
+          },
+          open(value) {
+            if (value) {
+              this.text3 = "Puerta Abierta";
+            } else {
+              this.text3 = "Puerta Cerrada";
+            }
+          },
+        },
+        computed: {
+          styles() {
+            return this.open ? "open" : "close";
+          },
+          styles_button() {
+            return this.open ? "close" : "open";
+          },
+          label() {
+            return this.open ? "Cerrar Puerta" : "Abrir Puerta";
+          },
+          fullName() {
+            return this.firstName + " " + this.lastName;
+          },
+          nowDay() {
+            return this.now.toLocaleDateString();
+          },
+        },
+        methods: {
+          increment_click() {
+            this.counter_click++;
+          },
+          increment_key() {
+            this.counter_key++;
+          },
+          submit() {
+            this.counter_submit++;
+          },
+          change() {
+            this.text = this.text2;
+            this.imagen = this.imagen2;
+          },
+          onChange(e) {
+            console.log(e.target.value);
+            e.target.value === ""
+              ? (this.textoChanged = "Mi texto de prueba")
+              : (this.textoChanged = e.target.value);
+          },
+        },
+        /*v-once = evita que cambie el valor mostrado ante una modificacion*/
+        /*v-text = evita que cambie el valor mostrado ante una modificacion*/
+        /*v-html = si el texto contiene etiquetas, lo expresara como html puro*/
+        /*v-bind = relaciona el valor de las varibles con las propiedades (src, alt, etc)*/
+        /*v-bind:[attri_img] = el contenido del corchete puede ser cualquier atributo para que sea dinamico (src, alt, type, etc), en este caso el atributo SRC se almacena en attri_img*/
+        /*v-on = se usa para controlar eventos como escritura o clics*/
+        /*v-model = es como la combinacion de todo*/
+        /*methods = Logica de eventos
+          computed = Logica de data en general 
+          watch = funciona como un observador que se ejecuta al cambiar el valor de una variable, Ojo!, La funcion debe de tener el mismo nombre que la variable */
+        template: `
+          <div v-once v-text="text"></div>
+          <div v-text="text"></div>
+          <div v-html="etiqueta"></div>
+          <img style="height: 400px;" v-bind:[attri_img]="imagen" alt="">
+          <br>
+          <button v-on:click="change">Cambiar</button>
+          <br>
+          <h3>====== FORMULARIO ======</h3>
+          <form v-on:submit.prevent.stop="submit" >
+            <label>incrementando con submit formulario </label>
+            <br>
+            <button>{{ counter_submit }}</button>
+          </form>
+          <h3>====== FORMULARIO ======</h3>
+          <br>
+          <label>incrementando con click</label>
+          <button v-on:click="increment_click" >{{ counter_click }}</button>
+          <br>
+          <label>incrementando al presionar una tecla</label>
+          <button v-on:keyup="increment_key" >{{ counter_key }}</button>
+
+          <h3>====== onChaged ======</h3>
+          <p>{{ textoChanged }}</p>
+          <input type="text" v-on:keyup="onChange" v-bind:value="textoChanged" />
+          <input type="text" v-model="textoChanged" />
+
+          <h3>====== Propiedades computadas ======</h3>
+          <div>{{ fullName }}</div>
+          <div>{{ nowDay }}</div>
+
+          <h3>====== Watchers ======</h3>
+          <div>{{ text3 }}</div>
+          <button v-on:click="open = !open">{{ label }}</button>
+
+          <h3>====== Estilos Reactivos ======</h3>
+          <div class="container" v-bind:class="styles">
+            <h2>{{ text3 }}</h2>
+          <button v-on:click="open = !open" v-bind:class="styles_button">{{ label }}</button>
+          </div>
+        `,
+      }).mount("#app");
+    </script>
+    <style>
+      html,
+      body {
+        height: 100vh;
+        margin: 0 auto;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      #app,
+      .container,
+      form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+      }
+      button {
+        margin-top: 24px;
+        border: none;
+        padding: 8px 24px;
+        border-radius: 12px;
+        background-color: greenyellow;
+      }
+      .close {
+        background-color: #eca1a6;
+      }
+      .open {
+        background-color: #b5e7a0;
+      }
+    </style>
+  </body>
+</html>

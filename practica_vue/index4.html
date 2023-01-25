@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <div id="app"></div>
+
+    <script>
+      /*Comunicación de componente padre a hijo*/
+      var app = Vue.createApp({
+        data() {
+          return {
+            items: ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"],
+          };
+        },
+        methods:{
+          remove(i){
+            this.items = this.items.filter((el, index) => index !== i )
+          }
+        },
+        // al ejecutar rm ejecuta la funcion quitar Line 33, y despues ejecuta la funcion remove Line 22
+        template: `
+          <ul>
+            <v-item 
+              v-for="(item, i) in items" 
+              v-bind:text="item"
+              :key="i"
+              v-on:quitar="remove(i)"
+            />      
+          </ul>`,
+      });
+
+      app.component("v-item", {
+        props: ["text"],
+        methods:{
+          // manda accion de hijo a padre
+          // ejecuta rm al hacer click al hijo Line 47, esta funcion se invoca en Line 33
+          rm(){
+            this.$emit("quitar")
+          }
+        },
+        template: `<li v-on:click="rm">{{text}}</li>`,
+      });
+
+      const vm = app.mount("#app");
+    </script>
+  </body>
+</html>
